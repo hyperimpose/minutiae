@@ -1,0 +1,35 @@
+[build-system]
+requires = ["flit_core >=3.2,<4"]
+build-backend = "flit_core.buildapi"
+
+[project]
+name = "minutia2erl"
+description = "minutia2erl bridges minutia to erlang through a port"
+version = "0.0.0"
+authors = [{name = "hyperimpose.org", email = "hyperimpose@protonmail.com"}]
+requires-python = ">=3.11"
+license = {file = "COPYING"}
+keywords = ["minutia", "minutiae", "hyperimpose", "url", "api", "metadata", "link", "title"]
+classifiers = [
+            "Development Status :: 4 - Beta",
+            "Intended Audience :: Developers",
+            "License :: OSI Approved :: GNU Affero General Public License v3",
+            "Topic :: Communications :: Chat",
+            "Topic :: Internet",
+            "Topic :: Internet :: WWW/HTTP"
+]
+dependencies = [
+             "minutia[media] @ git+https://github.com/hyperimpose/minutia.git@master"
+]
+
+[project.optional-dependencies]
+dev = [
+    "flake8",
+    "mypy",
+    "types-html5lib",
+    "types-Pillow"
+]
+
+[project.urls]
+Home = "https://hyperimpose.org"
+Source = "https://github.com/hyperimpose/minutiae"

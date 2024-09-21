@@ -1,0 +1,30 @@
+%%--------------------------------------------------------------------
+%% Copyright (C) 2023-2024 hyperimpose.org
+%%
+%% This file is part of minutiae.
+%%
+%% This program is free software: you can redistribute it and/or modify
+%% it under the terms of the GNU Affero General Public License as published
+%% by the Free Software Foundation, version 3.
+%%
+%% This program is distributed in the hope that it will be useful,
+%% but WITHOUT ANY WARRANTY; without even the implied warranty of
+%% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%% GNU Affero General Public License for more details.
+%%
+%% You should have received a copy of the GNU Affero General Public License
+%% along with this program.  If not, see <https://www.gnu.org/licenses/>.
+%%--------------------------------------------------------------------
+
+{application, minutiae,
+ [{description, "Gets info about the resource linked"},
+  {vsn, semver},
+  {modules, [minutiae_app, minutiae_sup, minutiae]},
+  {registered, [minutiae_sup, minutiae]},
+  {applications, [kernel, stdlib, bencode, polycache]},
+  {mod, {minutiae_app, []}},
+  {env, [{http_useragent, "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36"},
+         {language, "en"},
+         {max_filesize, 5_000_000},
+         {max_htmlsize, 14_000},
+         {explicit_unix_socket, ""}]}]}.

@@ -1,0 +1,65 @@
+#+OPTIONS: ^:nil
+
+* minutiae
+
+An Erlang application that extends the [[https://github.com/hyperimpose/minutia][minutia]] Python library.
+
+Extra features:
+- A built in cache mechanism.
+- Auto-dispatching based on the URL scheme.
+
+When installing minutia the ~media~ extra dependency is included.
+
+** Build
+
+**** Dependencies
+To *build* minutiae you will need the following:
+- A unix-like environment
+- Python 3.11 or later
+  - venv
+  - pip
+- Erlang/OTP 26 or later
+  - rebar3
+- GNU make
+
+To *run* minutiae you need:
+- Python 3.11 or later
+- Erlang/OTP 26 or later
+
+**** rebar3
+minutiae is built using rebar3. You can compile it by running: ~$ rebar3 compile~.
+
+or you can include it in your projects as a dependency in rebar.config:
+#+BEGIN_SRC erlang
+  {deps, [%% ... Other dependencies
+         {minutiae, {git, "https://github.com/hyperimpose/minutiae.git", {branch, "master"}}}]}.
+#+END_SRC
+
+*** Run
+You can quickly build and run minutiae using: ~$ rebar3 shell~.
+Then you can run the example found in [[Usage][Usage]]. You can also read the [[./doc/user.org][User documentation]] for more examples and
+a complete description of the library.
+
+** Documentation
+
+- [[./doc/user.org][User documentation]] :: API reference, examples, configuration
+   
+** Usage
+
+#+BEGIN_SRC erlang
+  %% After minutiae has been started you can access resources as follows:
+
+  minutiae:get("https://hyperimpose.org").
+
+  %% The previous call would return the following:
+  {ok,#{m => http_html, t => <<"hyperimpose">>, explicit => false}}
+#+END_SRC
+
+** License
+
+minutiae is licensed under the [[https://www.gnu.org/licenses/agpl-3.0.html][GNU Affero General Public License version 3 (AGPLv3)]].
+#+BEGIN_CENTER
+[[https://www.gnu.org/graphics/agplv3-with-text-162x68.png]]
+#+END_CENTER
+
+A copy of this license is included in the file [[../../COPYING][COPYING]].
