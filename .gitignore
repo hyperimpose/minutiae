@@ -24,3 +24,6 @@ rebar3.crashdump
 .mypy_cache/
 __pycache__/
 venv/
+
+# minutiae
+priv/bin/minutia2erl
