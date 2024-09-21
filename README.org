@@ -37,8 +37,7 @@ or you can include it in your projects as a dependency in rebar.config:
 
 *** Run
 You can quickly build and run minutiae using: ~$ rebar3 shell~.
-Then you can run the example found in [[#Usage
-][Usage]]. You can also read the [[./doc/user.org][User documentation]] for more examples and
+Then you can run the example found in [[./#Usage][Usage]]. You can also read the [[./doc/user.org][User documentation]] for more examples and
 a complete description of the library.
 
 ** Documentation
