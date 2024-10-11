@@ -311,16 +311,16 @@ http(#{<<"@">>        := <<"http:file:video">>,
 
 http(#{<<"@">>       := <<"http:google:search">>,
        <<"t">>       := T,
-       <<"snippet">> := Snippet,
+       <<"answer">>  := Answer,
        <<"results">> := Results}) ->
-    S1 = #{text => maps:get(<<"text">>, Snippet, <<>>),
-           link => maps:get(<<"link">>, Snippet, <<>>)},
+    A1 = #{text => maps:get(<<"text">>, Answer, <<>>),
+           link => maps:get(<<"link">>, Answer, <<>>)},
     R1 = lists:map(fun (#{<<"link">> := Link, <<"title">> := Title}) ->
                            #{link  => Link, title => Title}
                    end, Results),
     {ok, #{m       => http_google_search,
            t       => T,
-           snippet => S1,
+           answer  => A1,
            results => R1}};
 
 http(#{<<"@">>        := <<"http:lainchan:thread">>,
