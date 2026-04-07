@@ -64,6 +64,10 @@ def log(level, term):
     send(("log", level, term))
 
 
+def error(term):
+    send(("error", term))
+
+
 # Helpers ============================================================
 
 def bencode(term):

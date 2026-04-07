@@ -20,9 +20,10 @@ import asyncio
 import contextlib
 import io
 import logging
+import time
 import traceback
 
-from erlang import log, read_packet, send, ErlangLogHandler
+from erlang import error, log, read_packet, send, ErlangLogHandler
 
 
 logging.basicConfig(
@@ -77,38 +78,53 @@ async def http_get(link, lang):
     _link : str   : The link argument given. Used for async keying.
     _lang : str   : The language argument given. Used for async keying.
     """
-    match await minutia.http.get(link, lang=lang):
-        case "ok", payload:
-            # Insert metadata. These are needed by the Erlang side for keying.
-            payload.update({
-                "_link": link,
-                "_lang": lang
-            })
-            send(("http", payload))
-        case False:  # Unable to get any information for this link
-            payload = {
-                "@": "false",
-                "t": "",
-                "_link": link,
-                "_lang": lang
-            }
-            send(("http", payload))
-        case "error", msg, exception:
-            # We must always send a reply to the Erlang side, because otherwise
-            # the link stays in the queue forever.
-            payload = {
-                "@": "error",
-                "t": msg,
-                "_link": link,
-                "_lang": lang
-            }
-            send(("http", payload))
-            if msg:
-                log("debug", f"{link} - {exception} \n\n")
-            else:  # No msg means the error is unexpected
-                tb = "".join(traceback.format_exception(exception))
-                log("error", (f":( libminutia crashed @ {link} -> {exception}"
-                              f"\n\n{tb}"))
+    try:
+        match await minutia.http.get(link, lang=lang):
+            case "ok", payload:
+                # Insert metadata. The Erlang side uses those for keying.
+                payload.update({
+                    "_link": link,
+                    "_lang": lang
+                })
+                send(("http", payload))
+            case False:  # Unable to get any information for this link
+                payload = {
+                    "@": "false",
+                    "t": "",
+                    "_link": link,
+                    "_lang": lang
+                }
+                send(("http", payload))
+            case "error", msg, exception:
+                # We must always send a reply to the Erlang side, otherwise
+                # the link stays in the queue forever.
+                payload = {
+                    "@": "error",
+                    "t": msg,
+                    "_link": link,
+                    "_lang": lang,
+                    "_ttl": int(time.time() + 5)  # 5 second cache time
+                }
+                send(("http", payload))
+                if msg:
+                    log("debug", f"{link} - {exception} \n\n")
+                else:  # No msg means the error is unexpected
+                    tb = "".join(traceback.format_exception(exception))
+                    log("error", (f":/ minutia crashed @ {link} -> {exception}"
+                                  f"\n\n{tb}"))
+    except Exception as e:
+        # We must always send a reply to the Erlang side, otherwise
+        # the link stays in the queue forever.
+        payload = {
+            "@": "error",
+            "t": str(e),
+            "_link": link,
+            "_lang": lang,
+            "_ttl": int(time.time() + 5)  # 5 second cache time
+        }
+        send(("http", payload))
+        tb = traceback.format_exc()
+        log("error", (f":/ minutia crashed @ {link} -> {e}\n\n{tb}"))
 
 
 async def unknown_command(command, *args):
@@ -145,8 +161,20 @@ async def dispatch(packet: bytes):
             if errv:
                 log("notice", errv)
     except Exception as e:
-        log("emergency", (f":( libminutia crashed -> {e}"
+        # This should never happen.
+        #
+        # Exceptions thrown by minutia MUST be dealt with by the command
+        # handler found in FUN_D.
+        #
+        # If an exception leaks here, it means that either:
+        #     1) The handler is not handling the minutia exception properly.
+        #     2) Something trully unexpected happened.
+        #
+        # Because there is no way of handling these exceptions we inform the
+        # Erlang side of this fact and it will then error out.
+        log("emergency", (f"Traceback for: :( Port unrecoverable error -> {e}",
                           f"\n\n{traceback.format_exc()}"))
+        error(f":( Port unrecoverable error -> {e}")
 
 
 def parse_command(cmd):

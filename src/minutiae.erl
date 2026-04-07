@@ -35,7 +35,7 @@
 
 %% gen_server callbacks
 -export([init/1, handle_call/3, handle_cast/2, handle_info/2,
-         terminate/2, code_change/3, format_status/2]).
+         terminate/2, code_change/3]).
 
 
 %% Macros
@@ -223,14 +223,6 @@ code_change(_OldVsn, State, _Extra) ->
     {ok, State1} = reload_port(State),
     {ok, State1}.
 
-%%--------------------------------------------------------------------
-
--spec format_status(Opt :: normal | terminate,
-                    Status :: list()) -> Status :: term().
-
-format_status(_Opt, Status) ->
-    Status.
-
 
 %%%===================================================================
 %%% Internal functions
@@ -300,6 +292,7 @@ port_in_dispatcher(Data, State) ->
     case bencode:decode(Data) of
         [<<"http">>, Payload]       -> http_got(Payload, State);
         [<<"log">>, Level, Message] -> log_got(Level, Message, State);
+        [<<"error">>, Message]      -> error({minutia_error, Message});
         Else                        ->
             ?LOG_ERROR("Undefined response: ~p", [Else]),
             {noreply, State}
