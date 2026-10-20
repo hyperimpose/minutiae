@@ -1,5 +1,11 @@
 #+OPTIONS: ^:nil
 
+#+BEGIN_QUOTE
+*This repository is no longer active. It will be deleted sometime after 2027-01-01.*
+
+A similar project exists at https://github.com/hyperimpose/titles
+#+END_QUOTE
+
 * minutiae
 
 An Erlang application that extends the [[https://github.com/hyperimpose/minutia][minutia]] Python library.
